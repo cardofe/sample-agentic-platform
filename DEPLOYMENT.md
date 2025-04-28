@@ -73,7 +73,7 @@ To run the migrations from a local machine, we'll need to port forward to Aurora
 aws ec2 describe-instances \
   --filters "Name=tag:Name,Values=*bastion-instance*" \
   --query "Reservations[].Instances[].InstanceId" \
-  --output text
+  --output text --region us-west-2
 ```
 
 2. Find the master password (stored and rotated in SecretsManager)
