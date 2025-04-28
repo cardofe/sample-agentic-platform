@@ -70,10 +70,10 @@ To run the migrations from a local machine, we'll need to port forward to Aurora
 1 Find your management instance ID
 ```bash
 # This will give you the management instance ID
-aws ec2 describe-instances \
+INSTANCE_ID=$(aws ec2 describe-instances \
   --filters "Name=tag:Name,Values=*bastion-instance*" \
   --query "Reservations[].Instances[].InstanceId" \
-  --output text --region us-west-2
+  --output text --region us-west-2)
 ```
 
 2. Find the master password (stored and rotated in SecretsManager)
@@ -108,9 +108,10 @@ CLUSTER_WRITER_ENDPOINT=$(aws rds describe-db-clusters --db-cluster-identifier $
 
 # Port forward through SSM to the writer endpoint
   aws ssm start-session \
-  --target i-INSTANCEID \
+  --target $INSTANCE_ID \
   --document-name AWS-StartPortForwardingSessionToRemoteHost \
-  --parameters 'portNumber=5432,localPortNumber=5432,host=$CLUSTER_WRITER_ENDPOINT'
+  --parameters "portNumber=5432,localPortNumber=5432,host=$CLUSTER_WRITER_ENDPOINT" \
+  --region us-west-2
 ```
 
 5. Run Migrations
