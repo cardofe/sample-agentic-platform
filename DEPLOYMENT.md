@@ -79,12 +79,12 @@ aws ec2 describe-instances \
 2. Find the master password (stored and rotated in SecretsManager)
 ```bash
 # Get the cluster identifier
-CLUSTER_ID=$(aws rds describe-db-clusters --query 'DBClusters[?contains(DBClusterIdentifier, `postgres`)].DBClusterIdentifier' --output text)
+CLUSTER_ID=$(aws rds describe-db-clusters --query 'DBClusters[?contains(DBClusterIdentifier, `postgres`)].DBClusterIdentifier' --output text --region us-west-2)
 
 # Find the secret ARN for the master user
-SECRET_ARN=$(aws rds describe-db-clusters --db-cluster-identifier $CLUSTER_ID --query 'DBClusters[0].MasterUserSecret.SecretArn' --output text)
+SECRET_ARN=$(aws rds describe-db-clusters --db-cluster-identifier $CLUSTER_ID --query 'DBClusters[0].MasterUserSecret.SecretArn' --output text --region us-west-2)
 
-aws secretsmanager get-secret-value --secret-id $SECRET_ARN --query 'SecretString' --output text
+aws secretsmanager get-secret-value --secret-id $SECRET_ARN --query 'SecretString' --output text --region us-west-2
 ```
 
 3. Create and update .env file in the project dir
