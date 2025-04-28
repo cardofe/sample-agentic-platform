@@ -103,11 +103,13 @@ PG_CONNECTION_URL=localhost
 
 4. Start port forwarding to the aurora writer endpoint on port 5432
 ```bash
+# Get the Cluster's writer endpoint
+CLUSTER_WRITER_ENDPOINT=$(aws rds describe-db-clusters --db-cluster-identifier $CLUSTER_ID --query 'DBClusters[0].Endpoint' --output text --region us-west-2)
 # Port forward through SSM to the writer endpoint
   aws ssm start-session \
   --target i-INSTANCEID \
   --document-name AWS-StartPortForwardingSessionToRemoteHost \
-  --parameters 'portNumber=5432,localPortNumber=5432,host=<CLUSTER's WRITER ENDPOINT>'
+  --parameters 'portNumber=5432,localPortNumber=5432,host=$CLUSTER_WRITER_ENDPOINT'
 ```
 
 5. Run Migrations
